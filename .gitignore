@@ -1,0 +1,19 @@
+# Flutter / Dart generated files
+.dart_tool/
+.packages
+.pub/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+
+# Android generated files
+android/.gradle/
+android/local.properties
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+
+# Generated archives
+*.zip

@@ -30,7 +30,6 @@ class RoleBottomNav extends StatelessWidget {
     NavTabDef('documents', 'المستندات', 'file'),
     NavTabDef('notifications', 'الإشعارات', 'bell'),
     NavTabDef('profile', 'حسابي', 'user'),
-    NavTabDef('chatboot', 'مساعدك الذكي', 'chat'),
   ];
 
   @override

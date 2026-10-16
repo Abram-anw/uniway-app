@@ -34,10 +34,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _confirmLogout = false;
 
   _RoleProfile get _profile {
-    return const _RoleProfile('أحمد محمد العمري', 'علوم الحاسب · المستوى السابع', 'أ', [
+    return const _RoleProfile('أبرام انور ناجي', 'علوم الحاسب · المستوى الرابع', 'أ', [
       _StatDef('رقم الطالب', '4410123456'),
-      _StatDef('المعدل التراكمي', '4.21'),
-      _StatDef('الساعات المنجزة', '112'),
+      _StatDef('المعدل التراكمي', '3.58'),
+      _StatDef('الساعات المنجزة', '100'),
     ]);
   }
 

@@ -56,7 +56,7 @@ class HomeScreen extends StatelessWidget {
                           style: GoogleFonts.cairo(
                               fontSize: 10,
                               color: Colors.white.withValues(alpha: 0.75))),
-                      Text('👋 أحمد العمري',
+                      Text('👋 ابرام انور',
                           style: GoogleFonts.cairo(
                               fontSize: 17,
                               fontWeight: FontWeight.w900,

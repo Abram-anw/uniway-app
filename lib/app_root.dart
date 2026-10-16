@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'theme/app_colors.dart';
+import 'theme/app_icon.dart';
 import 'widgets/bottom_nav.dart';
 import 'models/procedure.dart';
 import 'models/student_request.dart';
@@ -42,6 +43,8 @@ class _AppRootState extends State<AppRoot> {
   String _trackBack = 'hs-entry';
   String _backTo = 'search';
   String _graduationBack = 'documents';
+  String _studentEmail = 'ahmad.alomari@university.edu';
+  String _studentPhone = '+966 50 123 4567';
   final List<GradeAppeal> _appeals = [
     GradeAppeal(
       trackingNumber: 'TZ-2026-1042',
@@ -100,6 +103,10 @@ class _AppRootState extends State<AppRoot> {
     'doctor-chat-list',
     'chat-doctor',
     'student-settings',
+    'account-data',
+    'change-password',
+    'about-app',
+    'privacy-policy',
     'student-support',
     'student-requests',
     'student-request-types',
@@ -223,7 +230,32 @@ class _AppRootState extends State<AppRoot> {
       case 'student-affairs-portal':
         return StudentAffairsPortalScreen(onNav: _go);
       case 'student-settings':
-        return StudentSettingsScreen(onBack: () => _go('profile'));
+        return StudentSettingsScreen(
+          onBack: () => _go('profile'),
+          onNavigate: _go,
+        );
+      case 'account-data':
+        return AccountDataScreen(
+          onBack: () => _go('student-settings'),
+          email: _studentEmail,
+          phone: _studentPhone,
+          onSave: (email, phone) {
+            setState(() {
+              _studentEmail = email;
+              _studentPhone = phone;
+            });
+          },
+        );
+      case 'change-password':
+        return ChangePasswordScreen(onBack: () => _go('student-settings'));
+      case 'about-app':
+        return AboutAppScreen(
+          onBack: () => _go('student-settings'),
+          onPrivacy: () => _go('privacy-policy'),
+          onSupport: () => _go('student-support'),
+        );
+      case 'privacy-policy':
+        return PrivacyPolicyScreen(onBack: () => _go('about-app'));
       case 'student-support':
         return SupportScreen(onBack: () => _go('profile'));
       case 'student-requests':
@@ -313,6 +345,15 @@ class _AppRootState extends State<AppRoot> {
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: _renderScreen(),
+      floatingActionButton: _screen == 'home'
+          ? FloatingActionButton(
+              onPressed: () => _go('chatboot'),
+              tooltip: 'مساعدك الذكي',
+              backgroundColor: AppColors.blue,
+              foregroundColor: Colors.white,
+              child: const AppIcon('chat', size: 24, color: Colors.white),
+            )
+          : null,
       bottomNavigationBar:
           tabBar == null ? null : SafeArea(top: false, child: tabBar),
     );
