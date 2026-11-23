@@ -8,6 +8,11 @@ class AppColors {
   static const Color blueDark = Color(0xFF174A72);
   static const Color blueMid = Color(0xFF2E72A8);
   static const Color blueLight = Color(0xFFEBF4FF);
+  static const Color splashNavy = Color(0xFF031243);
+  static const Color splashRoyal = Color(0xFF0B3FBF);
+  static const Color splashBright = Color(0xFF2D7BFF);
+  static const Color splashSky = Color(0xFF54B8FF);
+  static const Color splashLogoNavy = Color(0xFF001A65);
 
   static const Color success = Color(0xFF16A34A);
   static const Color successLight = Color(0xFFDCFCE7);

@@ -202,113 +202,106 @@ class HomeScreen extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(14, 13, 14, 0),
       child: Column(
         children: [
-          _sectionTitle(
-              'المواعيد النهائية', 'عرض الكل', () => onNav('reminders')),
+          _sectionTitle('المواعيد النهائية', null, null),
           const SizedBox(height: 8),
           ...homeDeadlines.map((deadline) {
             final statusColor = _deadlineColor(deadline.daysLeft);
             final statusBackground = _deadlineBackground(deadline.daysLeft);
-            return InkWell(
-              onTap: () => onSelectProc(allProcedures.firstWhere(
-                  (procedure) => procedure.title.contains('الاعتراض'),
-                  orElse: () => allProcedures.first)),
-              borderRadius: BorderRadius.circular(11),
-              child: Container(
-                height: 78,
-                margin: const EdgeInsets.only(bottom: 9),
-                padding: const EdgeInsets.fromLTRB(12, 9, 12, 8),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(11),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      bottom: 0,
+            return Container(
+              height: 78,
+              margin: const EdgeInsets.only(bottom: 9),
+              padding: const EdgeInsets.fromLTRB(12, 9, 12, 8),
+              decoration: BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.circular(11),
+                border: Border.all(color: AppColors.border),
+              ),
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                        width: 3,
+                        decoration: BoxDecoration(
+                            color: statusColor,
+                            borderRadius: BorderRadius.circular(3))),
+                  ),
+                  Positioned(
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
+                    child: Align(
+                      alignment: Alignment.centerLeft,
                       child: Container(
-                          width: 3,
-                          decoration: BoxDecoration(
-                              color: statusColor,
-                              borderRadius: BorderRadius.circular(3))),
-                    ),
-                    Positioned(
-                      left: 0,
-                      top: 0,
-                      bottom: 0,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 8, vertical: 3),
-                          decoration: BoxDecoration(
-                              color: statusBackground,
-                              borderRadius: BorderRadius.circular(10)),
-                          child: Text(
-                              '${deadline.daysLeft} يوم${deadline.daysLeft == 2 ? ' فقط' : ''}',
-                              style: GoogleFonts.cairo(
-                                  fontSize: 8.5,
-                                  fontWeight: FontWeight.w800,
-                                  color: statusColor)),
-                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                            color: statusBackground,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Text(
+                            '${deadline.daysLeft} يوم${deadline.daysLeft == 2 ? ' فقط' : ''}',
+                            style: GoogleFonts.cairo(
+                                fontSize: 8.5,
+                                fontWeight: FontWeight.w800,
+                                color: statusColor)),
                       ),
                     ),
-                    Positioned(
-                      right: 9,
-                      left: 74,
-                      top: 0,
-                      bottom: 0,
-                      child: Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            SizedBox(
-                              width: double.infinity,
-                              child: Text(deadline.title,
-                                  textAlign: TextAlign.right,
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: GoogleFonts.cairo(
-                                      fontSize: 10.5,
-                                      fontWeight: FontWeight.w900,
-                                      color: AppColors.text,
-                                      height: 1.3)),
+                  ),
+                  Positioned(
+                    right: 9,
+                    left: 74,
+                    top: 0,
+                    bottom: 0,
+                    child: Directionality(
+                      textDirection: TextDirection.rtl,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: Text(deadline.title,
+                                textAlign: TextAlign.right,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: GoogleFonts.cairo(
+                                    fontSize: 10.5,
+                                    fontWeight: FontWeight.w900,
+                                    color: AppColors.text,
+                                    height: 1.3)),
+                          ),
+                          const SizedBox(height: 2),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(deadline.date,
+                                    textAlign: TextAlign.right,
+                                    style: GoogleFonts.cairo(
+                                        fontSize: 8.5,
+                                        color: AppColors.textMuted)),
+                                const SizedBox(width: 4),
+                                const AppIcon('calendar',
+                                    size: 11,
+                                    color: AppColors.textMuted,
+                                    strokeWidth: 1.5),
+                              ],
                             ),
-                            const SizedBox(height: 2),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(deadline.date,
-                                      textAlign: TextAlign.right,
-                                      style: GoogleFonts.cairo(
-                                          fontSize: 8.5,
-                                          color: AppColors.textMuted)),
-                                  const SizedBox(width: 4),
-                                  const AppIcon('calendar',
-                                      size: 11,
-                                      color: AppColors.textMuted,
-                                      strokeWidth: 1.5),
-                                ],
-                              ),
-                            ),
-                            Align(
-                              alignment: Alignment.centerRight,
-                              child: Text(deadline.dept,
-                                  textAlign: TextAlign.right,
-                                  style: GoogleFonts.cairo(
-                                      fontSize: 8.5, color: statusColor)),
-                            ),
-                          ],
-                        ),
+                          ),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(deadline.dept,
+                                textAlign: TextAlign.right,
+                                style: GoogleFonts.cairo(
+                                    fontSize: 8.5, color: statusColor)),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             );
           }),

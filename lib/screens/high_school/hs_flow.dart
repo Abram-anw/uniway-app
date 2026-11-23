@@ -5,6 +5,78 @@ import '../../theme/app_colors.dart';
 import '../../theme/app_icon.dart';
 import '../../widgets/common.dart';
 
+const _applicantRequiredDocuments = [
+  'أصل شهادة الثانوية العامة مختومة بختم النسر',
+  'صورة شهادة ميلاد حديثة',
+  'بطاقة الترشيح',
+  'صورة من البطاقة الشخصية',
+  'صورة بطاقة ولي الأمر',
+  'عدد 6 صور شخصية 4×6',
+];
+
+class _ApplicantDocumentsChecklist extends StatelessWidget {
+  const _ApplicantDocumentsChecklist();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: AppColors.card,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('الأوراق المطلوبة عند التوجه للجامعة',
+              style: GoogleFonts.cairo(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.text)),
+          const SizedBox(height: 10),
+          ..._applicantRequiredDocuments.asMap().entries.map((entry) {
+            final isNominationCard = entry.key == 2;
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 22,
+                    height: 22,
+                    margin: const EdgeInsets.only(left: 8),
+                    decoration: const BoxDecoration(
+                      color: AppColors.blueLight,
+                      shape: BoxShape.circle,
+                    ),
+                    alignment: Alignment.center,
+                    child: Text('${entry.key + 1}',
+                        style: GoogleFonts.cairo(
+                            fontSize: 9,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.blue)),
+                  ),
+                  Expanded(
+                    child: Text(
+                      '${entry.value}${isNominationCard ? ' (مرفوعة في نموذج التقديم)' : ''}',
+                      style: GoogleFonts.cairo(
+                          fontSize: 11,
+                          color: AppColors.textSub,
+                          height: 1.7),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }),
+        ],
+      ),
+    );
+  }
+}
+
 /// نقطة دخول طالب الثانوية: تقديم طلب جديد أو تتبع طلب سابق.
 class HSApplicantEntryScreen extends StatelessWidget {
   final VoidCallback onApply, onTrack, onBack;
@@ -134,6 +206,7 @@ class _HSApplicationScreenState extends State<HSApplicationScreen> {
                         child: Text('للتقديم تحتاج فقط إلى إدخال اسمك ورقمك القومي ورفع بطاقة الترشيح. لا تحتاج إلى إنشاء حساب.',
                             style: GoogleFonts.cairo(fontSize: 12, color: AppColors.blue, height: 1.8)),
                       ),
+                      const _ApplicantDocumentsChecklist(),
                       Container(
                         padding: const EdgeInsets.all(16),
                         margin: const EdgeInsets.only(bottom: 12),
@@ -590,6 +663,9 @@ class _HSStatusScreenState extends State<HSStatusScreen> {
                       ],
                     ),
                   ),
+                  if (status == 'مقبول') ...[
+                    const _ApplicantDocumentsChecklist(),
+                  ],
                   Container(
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(color: AppColors.card, borderRadius: BorderRadius.circular(14), border: Border.all(color: AppColors.border)),

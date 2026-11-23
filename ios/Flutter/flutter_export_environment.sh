@@ -1,7 +1,7 @@
 #!/bin/sh
 # This is a generated file; do not edit or check into version control.
-export "FLUTTER_ROOT=C:\src\flutter"
-export "FLUTTER_APPLICATION_PATH=E:\كل ما يخص مشروع  التخرج 2027\uniway-app-main"
+export "FLUTTER_ROOT=C:\flu\flutter"
+export "FLUTTER_APPLICATION_PATH=C:\Users\ABRAM\Desktop\uniway_flutter"
 export "COCOAPODS_PARALLEL_CODE_SIGN=true"
 export "FLUTTER_TARGET=lib\main.dart"
 export "FLUTTER_BUILD_DIR=build"

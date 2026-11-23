@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'theme/app_colors.dart';
 import 'theme/app_icon.dart';
 import 'widgets/bottom_nav.dart';
@@ -19,11 +20,11 @@ import 'screens/student/grades_screen.dart';
 import 'screens/student/documents_screen.dart';
 import 'screens/student/lectures_screen.dart';
 import 'screens/student/chat_doctor_screen.dart';
-import 'screens/student/chat_student_affairs_screen.dart';
 import 'screens/student/notifications_screen.dart';
 import 'screens/student/student_requests_flow.dart';
 import 'screens/student/settings_support_screens.dart';
 import 'screens/high_school/hs_flow.dart';
+import 'features/splash/splash_screen.dart';
 
 class AppRoot extends StatefulWidget {
   const AppRoot({super.key});
@@ -34,6 +35,9 @@ class AppRoot extends StatefulWidget {
 
 class _AppRootState extends State<AppRoot> {
   String _screen = 'onboarding';
+  bool _preferencesLoaded = false;
+  String _initialScreen = 'onboarding';
+  static const _onboardingCompleteKey = 'uniway_onboarding_complete';
   Procedure? _selectedProc;
   StudentRequestType _selectedStudentRequest = studentRequestTypes.first;
   String _selectedLectureCourse = 'CS401';
@@ -72,6 +76,37 @@ class _AppRootState extends State<AppRoot> {
   GradeAppeal? _selectedAppeal;
 
   void _go(String screen) => setState(() => _screen = screen);
+
+  @override
+  void initState() {
+    super.initState();
+    _loadInitialScreen();
+  }
+
+  Future<void> _loadInitialScreen() async {
+    final preferences = await SharedPreferences.getInstance();
+    final onboardingComplete =
+        preferences.getBool(_onboardingCompleteKey) ?? false;
+    if (!mounted) return;
+    setState(() {
+      _initialScreen = onboardingComplete ? 'login' : 'onboarding';
+    });
+  }
+
+  void _finishSplash() {
+    if (!mounted) return;
+    setState(() {
+      _screen = _initialScreen;
+      _preferencesLoaded = true;
+    });
+  }
+
+  Future<void> _completeOnboarding() async {
+    final preferences = await SharedPreferences.getInstance();
+    await preferences.setBool(_onboardingCompleteKey, true);
+    if (!mounted) return;
+    _go('login');
+  }
 
   void _openProc(Procedure procedure, {String from = 'search'}) {
     setState(() {
@@ -115,7 +150,6 @@ class _AppRootState extends State<AppRoot> {
     'student-request-detail',
     'appeal-success',
     'appeal-track',
-    'chat-student-affairs',
     'chatboot',
   ];
 
@@ -130,7 +164,7 @@ class _AppRootState extends State<AppRoot> {
   Widget _renderScreen() {
     switch (_screen) {
       case 'onboarding':
-        return OnboardingScreen(onDone: () => _go('login'));
+        return OnboardingScreen(onDone: _completeOnboarding);
       case 'login':
         return LoginScreen(
             onLogin: () => _go('home'), onHighSchool: () => _go('hs-entry'));
@@ -285,11 +319,8 @@ class _AppRootState extends State<AppRoot> {
             onBack: () => _go('student-affairs-portal'));
       case 'student-request-detail':
         return StudentRequestDetailScreen(
-            onBack: () => _go('student-affairs-portal'),
-            onChat: () => _go('chat-student-affairs'));
-      case 'chat-student-affairs':
-        return ChatStudentAffairsScreen(
-            onBack: () => _go('student-request-detail'));
+            request: _selectedStudentRequest,
+            onBack: () => _go('student-affairs-portal'));
       case 'hs-entry':
         return HSApplicantEntryScreen(
           onBack: () => _go('login'),
@@ -345,7 +376,9 @@ class _AppRootState extends State<AppRoot> {
     final tabBar = _renderTabBar();
     return Scaffold(
       backgroundColor: AppColors.bg,
-      body: _renderScreen(),
+      body: _preferencesLoaded
+          ? _renderScreen()
+          : SplashScreen(onDone: _finishSplash),
       floatingActionButton: _screen == 'home'
           ? FloatingActionButton(
               onPressed: () => _go('chatboot'),

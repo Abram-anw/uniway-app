@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_colors.dart';
 import '../../theme/app_icon.dart';
@@ -13,18 +12,22 @@ class _DocDef {
 }
 
 const _docs = [
-  _DocDef('file', AppColors.blue, AppColors.blueLight, 'كشف الدرجات الرسمي',
-      'متاح · آخر طلب منذ أسبوع', 'مجاناً', AppColors.success),
-  _DocDef('award', AppColors.purple, AppColors.purpleLight, 'شهادة التخرج',
-      'تقديم إلكتروني بعد استيفاء الشروط', 'طلب', AppColors.purple),
-  _DocDef('grad', AppColors.success, AppColors.successLight, 'شهادة قيد',
-      'متاحة فوراً', '10 ريال', AppColors.blue),
-  _DocDef('star', AppColors.warning, AppColors.warningLight, 'شهادة إجادة لغة',
-      'مشروطة باجتياز الاختبار', '25 ريال', AppColors.blue),
-  _DocDef('clipboard', Color(0xFFE11D48), Color(0xFFFFF1F2), 'خطاب تعريفي',
-      'فوري · باللغتين', 'مجاناً', AppColors.success),
-  _DocDef('shield', Color(0xFF15803D), Color(0xFFF0FDF4),
-      'السجل الأكاديمي الكامل', 'متاح بطلب رسمي', '15 ريال', AppColors.blue),
+  _DocDef('shield', AppColors.blue, AppColors.blueLight, 'طلب تجنيد',
+      'للطلبة المستجدين', 'طلب', AppColors.blue),
+  _DocDef('file', AppColors.blue, AppColors.blueLight, 'طلب بيان حالة',
+      'المستندات والخطوات المطلوبة لتقديم هذا الطلب', 'طلب', AppColors.blue),
+  _DocDef('layers', AppColors.purple, AppColors.purpleLight, 'طلب تعديل مسار',
+      'المستندات والخطوات المطلوبة لتقديم هذا الطلب', 'طلب', AppColors.purple),
+  _DocDef('clipboard', Color(0xFFE11D48), Color(0xFFFFF1F2), 'طلب تظلم',
+      'المستندات والخطوات المطلوبة لتقديم هذا الطلب', 'ورقي', AppColors.danger),
+  _DocDef('idCard', AppColors.success, AppColors.successLight, 'طلب إثبات قيد',
+      'المستندات والخطوات المطلوبة لتقديم هذا الطلب', 'طلب', AppColors.success),
+  _DocDef('star', AppColors.warning, AppColors.warningLight, 'طلب بيان نجاح',
+      'المستندات والخطوات المطلوبة لتقديم هذا الطلب', 'طلب', AppColors.warning),
+  _DocDef('metro', AppColors.blue, AppColors.blueLight, 'طلب عمل كارنيه مترو',
+      'المستندات والخطوات المطلوبة لتقديم هذا الطلب', 'طلب', AppColors.blue),
+  _DocDef('award', AppColors.purple, AppColors.purpleLight, 'طلب شهادة التخرج',
+      'المستندات والخطوات المطلوبة لتقديم هذا الطلب', 'طلب', AppColors.purple),
 ];
 
 /// شاشة طلب المستندات والشهادات الرسمية.
@@ -63,7 +66,7 @@ class DocumentsScreen extends StatelessWidget {
                           badgeColor: d.badgeColor,
                           divider: i < _docs.length - 1,
                           onTap: () {
-                            if (d.title == 'شهادة التخرج') {
+                            if (d.title == 'طلب شهادة التخرج') {
                               onNav?.call('graduation');
                             }
                           },
@@ -81,40 +84,6 @@ class DocumentsScreen extends StatelessWidget {
   }
 }
 
-class _GradReq {
-  final String label;
-  final String? hint;
-  final bool needsProof;
-  const _GradReq(this.label, {this.hint, this.needsProof = false});
-}
-
-const _gradReqs = [
-  _GradReq('صورة بطاقة الرقم القومي',
-      hint: 'صورة واضحة للوجهين.', needsProof: true),
-  _GradReq('صورة شخصية حديثة بخلفية بيضاء',
-      hint: 'صورة رسمية حديثة.', needsProof: true),
-  _GradReq(
-    'شهادة إتمام الخدمة العسكرية أو الإعفاء',
-    hint: 'أرفق مستندًا رسميًا يوضح الموقف من الخدمة العسكرية.',
-    needsProof: true,
-  ),
-  _GradReq(
-    'إفادة اجتياز التدريب الميداني',
-    hint: 'أرفق إفادة مختومة من جهة التدريب.',
-    needsProof: true,
-  ),
-  _GradReq(
-    'استمارة إخلاء الطرف',
-    hint: 'أرفق إخلاء طرف معتمدًا من جميع الجهات.',
-    needsProof: true,
-  ),
-  _GradReq(
-    'إفادة إتمام 132 ساعة معتمدة بنجاح',
-    hint: 'أرفق كشفًا أو إفادة رسمية بإتمام ساعات النجاح المطلوبة.',
-    needsProof: true,
-  ),
-];
-
 /// شاشة التقدم لطلب شهادة التخرج، مع التحقق من متطلبات التخرج أولاً.
 class GraduationScreen extends StatefulWidget {
   final VoidCallback onBack;
@@ -126,317 +95,217 @@ class GraduationScreen extends StatefulWidget {
 
 class _GraduationScreenState extends State<GraduationScreen> {
   int _step = 0;
-  final Map<int, String> _proofs = {};
-
-  Future<void> _pickProof(int index) async {
-    final result = await FilePicker.pickFiles(
-      type: FileType.custom,
-      allowedExtensions: ['pdf', 'jpg', 'jpeg', 'png'],
-    );
-    if (!mounted || result.isEmpty) return;
-    setState(() => _proofs[index] = result.single.name);
-  }
-
-  void _removeProof(int index) {
-    setState(() => _proofs.remove(index));
-  }
+  bool _paymentUploaded = false;
+  bool _confirm = false;
+  static const bool _creditHoursEligible = true;
 
   @override
   Widget build(BuildContext context) {
-    final allDone = _gradReqs.asMap().entries.every((entry) {
-      final requirement = entry.value;
-      return !requirement.needsProof || _proofs.containsKey(entry.key);
-    });
+    final ready = _creditHoursEligible && _paymentUploaded;
     return Container(
       color: AppColors.bg,
       child: SafeArea(
-        child: Column(
+        child: Stack(
           children: [
-            BackHeader(title: 'طلب شهادة التخرج', onBack: widget.onBack),
-            Expanded(
-              child: _step == 0
-                  ? ListView(
-                      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 10),
-                          margin: const EdgeInsets.only(bottom: 12),
-                          decoration: BoxDecoration(
-                            color: AppColors.warningLight,
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(
-                                color:
-                                    AppColors.warning.withValues(alpha: 0.3)),
-                          ),
-                          child: Row(
-                            children: [
-                              const Icon(Icons.warning_amber_rounded,
-                                  size: 18, color: AppColors.warning),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  'يجب رفع جميع المستندات الإلزامية قبل إرسال الطلب.',
-                                  style: GoogleFonts.cairo(
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.warning),
+            Column(
+              children: [
+                BackHeader(title: 'طلب شهادة التخرج', onBack: widget.onBack),
+                Expanded(
+                  child: _step == 0
+                      ? ListView(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 90),
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(14),
+                              margin: const EdgeInsets.only(bottom: 12),
+                              decoration: BoxDecoration(
+                                color: _creditHoursEligible ? AppColors.successLight : AppColors.dangerLight,
+                                borderRadius: BorderRadius.circular(14),
+                                border: Border.all(color: _creditHoursEligible ? AppColors.success : AppColors.danger),
+                              ),
+                              child: Text(
+                                _creditHoursEligible
+                                    ? 'مؤهل لاستخراج شهادة التخرج'
+                                    : 'غير مؤهل لاستخراج شهادة التخرج حاليًا',
+                                style: GoogleFonts.cairo(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w800,
+                                  color: _creditHoursEligible ? AppColors.success : AppColors.danger,
+                                ),
+                              ),
+                            ),
+                            if (_creditHoursEligible) ...[
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: AppColors.blueLight,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(color: AppColors.blue.withValues(alpha: 0.18)),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      width: 28,
+                                      height: 28,
+                                      decoration: const BoxDecoration(color: AppColors.blue, shape: BoxShape.circle),
+                                      alignment: Alignment.center,
+                                      child: Text('1', style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.w800, color: Colors.white)),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: Text(
+                                        'سحب طلب شهادة التخرج من غرفة الـ IT',
+                                        style: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.text),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(bottom: 10),
+                                padding: const EdgeInsets.all(14),
+                                decoration: BoxDecoration(
+                                  color: AppColors.card,
+                                  borderRadius: BorderRadius.circular(14),
+                                  border: Border.all(color: AppColors.border),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            'صورة من دفع مصروفات طلب شهادة التخرج من على موقع الـ UMS',
+                                            style: GoogleFonts.cairo(fontSize: 13, fontWeight: FontWeight.w800, color: AppColors.text),
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+                                          decoration: BoxDecoration(color: AppColors.dangerLight, borderRadius: BorderRadius.circular(20)),
+                                          child: Text('إلزامي', style: GoogleFonts.cairo(fontSize: 9, fontWeight: FontWeight.w700, color: AppColors.danger)),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text('PDF / JPG / PNG – حتى 5MB', style: GoogleFonts.cairo(fontSize: 10, color: AppColors.textMuted)),
+                                    const SizedBox(height: 10),
+                                    if (_paymentUploaded)
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                                        margin: const EdgeInsets.only(bottom: 8),
+                                        decoration: BoxDecoration(color: AppColors.successLight, borderRadius: BorderRadius.circular(10)),
+                                        child: Row(
+                                          children: [
+                                            const AppIcon('checkCircle', size: 16, color: AppColors.success),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: Text('graduation-payment.pdf',
+                                                  style: GoogleFonts.cairo(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.success)),
+                                            ),
+                                            InkWell(
+                                              onTap: () => setState(() => _paymentUploaded = false),
+                                              child: const AppIcon('trash', size: 14, color: AppColors.danger),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    SizedBox(
+                                      width: double.infinity,
+                                      child: OutlinedButton(
+                                        onPressed: () => setState(() => _paymentUploaded = true),
+                                        style: OutlinedButton.styleFrom(
+                                          foregroundColor: _paymentUploaded ? AppColors.success : AppColors.blue,
+                                          side: BorderSide(color: _paymentUploaded ? AppColors.success : AppColors.blue),
+                                        ),
+                                        child: Text(_paymentUploaded ? 'تغيير الملف' : 'رفع الملف',
+                                            style: GoogleFonts.cairo(fontSize: 11, fontWeight: FontWeight.w700)),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
-                          ),
+                          ],
+                        )
+                      : ListView(
+                          padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
+                          children: [
+                            Container(
+                              width: 64,
+                              height: 64,
+                              decoration: const BoxDecoration(color: AppColors.successLight, shape: BoxShape.circle),
+                              alignment: Alignment.center,
+                              child: const AppIcon('award', size: 30, color: AppColors.success),
+                            ),
+                            const SizedBox(height: 16),
+                            Center(
+                              child: Text('تم إرسال طلبك بنجاح',
+                                  style: GoogleFonts.cairo(fontSize: 16, fontWeight: FontWeight.w900, color: AppColors.text)),
+                            ),
+                            const SizedBox(height: 8),
+                            Center(
+                              child: Text('رقم الطلب: REQ-2025-1052',
+                                  style: GoogleFonts.cairo(fontSize: 13, color: AppColors.textSub)),
+                            ),
+                          ],
                         ),
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          margin: const EdgeInsets.only(bottom: 14),
-                          decoration: BoxDecoration(
-                              color: AppColors.card,
-                              borderRadius: BorderRadius.circular(14),
-                              border: Border.all(color: AppColors.border)),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('شروط استخراج شهادة التخرج',
-                                  style: GoogleFonts.cairo(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w800,
-                                      color: AppColors.text)),
-                              const SizedBox(height: 4),
-                              Text(
-                                'راجع الشروط وأرفق ما يثبت استيفاءها قبل تقديم الطلب.',
-                                style: GoogleFonts.cairo(
-                                    fontSize: 11, color: AppColors.textMuted),
-                              ),
-                              const SizedBox(height: 14),
-                              ..._gradReqs.asMap().entries.map((entry) {
-                                final index = entry.key;
-                                final requirement = entry.value;
-                                final hasProof = _proofs.containsKey(index);
-                                return Container(
-                                  margin: const EdgeInsets.only(bottom: 12),
-                                  padding: const EdgeInsets.all(11),
-                                  decoration: BoxDecoration(
-                                    color: hasProof
-                                        ? AppColors.successLight
-                                            .withValues(alpha: 0.45)
-                                        : AppColors.bg,
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: hasProof
-                                          ? AppColors.success
-                                          : AppColors.border,
-                                    ),
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Container(
-                                            width: 22,
-                                            height: 22,
-                                            decoration: BoxDecoration(
-                                              color: hasProof
-                                                  ? AppColors.success
-                                                  : AppColors.white,
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: hasProof
-                                                    ? AppColors.success
-                                                    : AppColors.textMuted,
-                                              ),
-                                            ),
-                                            alignment: Alignment.center,
-                                            child: hasProof
-                                                ? const AppIcon('check',
-                                                    size: 12,
-                                                    strokeWidth: 2.5,
-                                                    color: Colors.white)
-                                                : Text('${index + 1}',
-                                                    style: GoogleFonts.cairo(
-                                                        fontSize: 10,
-                                                        color: AppColors
-                                                            .textMuted)),
-                                          ),
-                                          const SizedBox(width: 10),
-                                          Expanded(
-                                            child: Text(
-                                              requirement.label,
-                                              style: GoogleFonts.cairo(
-                                                  fontSize: 12.5,
-                                                  height: 1.5,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: AppColors.text),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      if (requirement.hint != null) ...[
-                                        const SizedBox(height: 4),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(right: 32),
-                                          child: Text(
-                                            requirement.hint!,
-                                            style: GoogleFonts.cairo(
-                                                fontSize: 10.5,
-                                                height: 1.5,
-                                                color: AppColors.textSub),
-                                          ),
-                                        ),
-                                      ],
-                                      if (requirement.needsProof) ...[
-                                        const SizedBox(height: 8),
-                                        if (hasProof)
-                                          Column(
-                                            children: [
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 10,
-                                                        vertical: 8),
-                                                decoration: BoxDecoration(
-                                                  color: AppColors.successLight,
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                ),
-                                                child: Row(
-                                                  children: [
-                                                    const Icon(
-                                                        Icons.check_circle,
-                                                        size: 18,
-                                                        color:
-                                                            AppColors.success),
-                                                    const SizedBox(width: 7),
-                                                    Expanded(
-                                                      child: Text(
-                                                        _proofs[index]!,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style:
-                                                            GoogleFonts.cairo(
-                                                                fontSize: 10,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                color: AppColors
-                                                                    .success),
-                                                      ),
-                                                    ),
-                                                    IconButton(
-                                                      onPressed: () {},
-                                                      icon: const Icon(
-                                                          Icons.visibility,
-                                                          size: 18),
-                                                      color: AppColors.success,
-                                                      tooltip: 'عرض الملف',
-                                                      visualDensity:
-                                                          VisualDensity.compact,
-                                                    ),
-                                                    IconButton(
-                                                      onPressed: () =>
-                                                          _removeProof(index),
-                                                      icon: const Icon(
-                                                          Icons.delete_outline,
-                                                          size: 18),
-                                                      color: AppColors.danger,
-                                                      tooltip: 'حذف الملف',
-                                                      visualDensity:
-                                                          VisualDensity.compact,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              const SizedBox(height: 8),
-                                              OutlinedButton(
-                                                onPressed: () =>
-                                                    _pickProof(index),
-                                                child: Text('تغيير الملف',
-                                                    style: GoogleFonts.cairo(
-                                                        fontSize: 11,
-                                                        fontWeight:
-                                                            FontWeight.w700)),
-                                              ),
-                                            ],
-                                          )
-                                        else
-                                          SizedBox(
-                                            width: double.infinity,
-                                            child: OutlinedButton.icon(
-                                              onPressed: () => _pickProof(index),
-                                              icon: const Icon(
-                                                  Icons.upload_file_outlined,
-                                                  size: 17),
-                                              label: Text('رفع المستند',
-                                                  style: GoogleFonts.cairo(
-                                                      fontSize: 11,
-                                                      fontWeight:
-                                                          FontWeight.w700)),
-                                            ),
-                                          ),
-                                      ],
-                                    ],
-                                  ),
-                                );
-                              }),
-                            ],
-                          ),
-                        ),
-                        if (!allDone)
-                          Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: BoxDecoration(
-                                color: AppColors.warningLight,
-                                borderRadius: BorderRadius.circular(14)),
-                            child: Text(
-                                'يجب رفع جميع المستندات المطلوبة لتفعيل تقديم الطلب.',
-                                style: GoogleFonts.cairo(
-                                    fontSize: 12,
-                                    height: 1.6,
-                                    color: AppColors.warning,
-                                    fontWeight: FontWeight.w600)),
-                          )
-                        else
-                          PrimaryButton(
-                              label: 'تقديم الطلب',
-                              onPressed: () => setState(() => _step = 1)),
-                      ],
-                    )
-                  : ListView(
-                      padding: const EdgeInsets.fromLTRB(24, 48, 24, 24),
-                      children: [
-                        Container(
-                          width: 64,
-                          height: 64,
-                          decoration: const BoxDecoration(
-                              color: AppColors.successLight,
-                              shape: BoxShape.circle),
-                          alignment: Alignment.center,
-                          child: const AppIcon('award',
-                              size: 30, color: AppColors.success),
-                        ),
-                        const SizedBox(height: 16),
-                        Center(
-                            child: Text('تم استلام طلبك',
-                                style: GoogleFonts.cairo(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w900,
-                                    color: AppColors.text))),
-                        const SizedBox(height: 8),
-                        Center(
-                            child: Text(
-                                'سيتم مراجعة طلبك وإشعارك باستلام الشهادة خلال 14 يوم عمل.',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.cairo(
-                                    fontSize: 13,
-                                    color: AppColors.textSub,
-                                    height: 1.7))),
-                      ],
+                ),
+                if (_step == 0 && _creditHoursEligible)
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    decoration: const BoxDecoration(color: AppColors.white, border: Border(top: BorderSide(color: AppColors.border))),
+                    child: PrimaryButton(
+                      label: 'إرسال الطلب',
+                      onPressed: ready ? () => setState(() => _confirm = true) : null,
                     ),
+                  ),
+              ],
             ),
+            if (_confirm)
+              Container(
+                color: Colors.black.withValues(alpha: 0.45),
+                alignment: Alignment.center,
+                padding: const EdgeInsets.all(24),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.fromLTRB(20, 24, 20, 20),
+                  decoration: BoxDecoration(color: AppColors.white, borderRadius: BorderRadius.circular(20)),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('هل أنت متأكد من إرسال الطلب؟',
+                          style: GoogleFonts.cairo(fontSize: 15, fontWeight: FontWeight.w900, color: AppColors.text)),
+                      const SizedBox(height: 20),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () => setState(() {
+                                _confirm = false;
+                                _step = 1;
+                              }),
+                              style: ElevatedButton.styleFrom(backgroundColor: AppColors.blue, foregroundColor: Colors.white),
+                              child: Text('إرسال الطلب', style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => setState(() => _confirm = false),
+                              child: Text('إلغاء', style: GoogleFonts.cairo(fontWeight: FontWeight.w700)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
           ],
         ),
       ),

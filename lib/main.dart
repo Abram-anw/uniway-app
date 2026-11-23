@@ -8,7 +8,6 @@ void main() {
   runApp(const UniwayApp());
 }
 
-/// نقطة انطلاق تطبيق UNIWAY — دليل الخدمات الجامعية الذكي.
 class UniwayApp extends StatelessWidget {
   const UniwayApp({super.key});
 

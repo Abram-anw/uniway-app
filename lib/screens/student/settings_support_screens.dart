@@ -892,12 +892,10 @@ class _StudentPastRequest {
 }
 
 final _pastRequests = [
-  _StudentPastRequest('REQ-1048', 'تظلم على درجة', '5 يناير 2025',
+  _StudentPastRequest('REQ-1048', 'طلب بيان حالة', '5 يناير 2025',
       'قيد المراجعة', AppColors.warning, AppColors.warningLight, 2),
-  _StudentPastRequest('DOC-9921', 'كشف درجات رسمي', '2 يناير 2025', 'مكتمل',
+  _StudentPastRequest('DOC-9921', 'طلب شهادة تخرج', '2 يناير 2025', 'مكتمل',
       AppColors.success, AppColors.successLight, 4),
-  _StudentPastRequest('REG-7734', 'انسحاب من مقرر', '18 ديسمبر 2024',
-      'يحتاج معلومات', AppColors.danger, AppColors.dangerLight, 1),
 ];
 
 /// سجل طلبات الطالب السابقة لشؤون الطلاب مع مؤشر تقدّم بصري.
